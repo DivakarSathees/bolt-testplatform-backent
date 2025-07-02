@@ -111,11 +111,27 @@ const importQuestionSetsFromExcel = async (file, { examId, subjectId, chapterId,
   }
 };
 
+// Get all question sets by cgapterId
+const getQuestionSetsByChapterId = async (chapterId) => {
+  const questionSets = await QuestionSet.find({
+    chapterId,
+    isActive: true
+  });
+  if (!questionSets || questionSets.length === 0) {
+    const err = new Error('No question sets found for this chapter');
+    err.status = 404;
+    throw err;
+  }
+  return questionSets;
+};
+
+
 
 module.exports = {
   createQuestionSet,
   getAllQuestionSets,
   getQuestionSetById,
   updateQuestionSet,
-  importQuestionSetsFromExcel
+  importQuestionSetsFromExcel,
+  getQuestionSetsByChapterId
 };

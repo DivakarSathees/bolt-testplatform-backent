@@ -16,9 +16,10 @@ app.http('boltGetQuestions', {
     const perms = authorize(['contentadmin', 'trainer', 'superadmin'], authResult.user);
     if (!perms.authorized) return perms.response;
 
-    const { subject, difficulty, topic, page = 1, limit = 10 } = req.query;
+    const { subject, difficulty, topic, page = 1, limit = 10, questionSetId } = req.query;
     const query = { isActive: true };
-
+    
+    if (questionSetId) query.questionSetId = questionSetId;
     if (subject) query.subject = subject;
     if (difficulty) query.difficulty = difficulty;
     if (topic) query.topic = new RegExp(topic, 'i');

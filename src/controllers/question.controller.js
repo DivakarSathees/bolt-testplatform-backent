@@ -1,4 +1,4 @@
-const Question = require('../models/question.model');
+const Question = require('../boltmodels/Question');
 const XLSX = require('xlsx');
 const os = require('os');
 const fs = require('fs').promises;
@@ -133,6 +133,26 @@ const importQuestionsFromExcel = async (file, { questionSetId, createdBy }) => {
   }
 };
 
+// get ques by question set id
+const getQuestionsBySetId = async (questionSetId) => {
+  const questions = await Question.find({ questionSetId, isActive: true })
+    .populate('createdBy', 'name')
+    // .limit(limit * 1)
+    // .skip((page - 1) * limit)
+    // .sort({ createdAt: -1 });
+  const total = await Question.countDocuments({ questionSetId, isActive: true });
+  if (!questions || questions.length === 0) {
+    const err = new Error('No questions found for this question set');
+    err.status = 404;
+    throw err;
+  }
+  return {
+    questions,
+    // totalPages: Math.ceil(total / limit),
+    // currentPage: Number(page),
+    total
+  };
+}
 
 
 
@@ -141,5 +161,6 @@ module.exports = {
   getAllQuestions,
   getQuestionById,
   updateQuestion,
-  importQuestionsFromExcel
+  importQuestionsFromExcel,
+  getQuestionsBySetId
 };
