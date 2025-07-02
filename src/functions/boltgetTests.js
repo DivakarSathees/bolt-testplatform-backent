@@ -28,21 +28,36 @@ app.http('getTests', {
     try {
       const testsRaw = await Test.find(query)
         .populate('createdBy', 'name')
-        .select('-questions')
+        .select('-questionIds')
         .limit(limit *1)
         .skip((page -1)*limit)
         .sort({ createdAt: -1 })
         .lean();
 
+      // const tests = await Promise.all(testsRaw.map(async t => {
+      //   const [res] = await Test.aggregate([
+      //     { $match: { _id: t._id } },
+      //     { $project: { count: { $size: '$questionIds' } } }
+      //   ]);
+      //   return {
+      //     ...t,
+      //     questionCount: res?.count || 0
+      //   };
+      // }));
+
       const tests = await Promise.all(testsRaw.map(async t => {
-        const [res] = await Test.aggregate([
-          { $match: { _id: t._id } },
-          { $project: { count: { $size: '$questions' } } }
-        ]);
-        return {
-          ...t,
-          questionCount: res?.count || 0
-        };
+      const [res] = await Test.aggregate([
+        { $match: { _id: t._id } },
+        {
+          $project: {
+            count: { $size: { $ifNull: ['$questionIds', []] } }
+          }
+        }
+      ]);
+      return {
+        ...t,
+        questionCount: res?.count || 0
+      };
       }));
 
       const total = await Test.countDocuments(query);

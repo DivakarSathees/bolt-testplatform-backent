@@ -15,17 +15,27 @@ app.http('boltcreateTest', {
     const perms = authorize(['contentadmin','trainer','superadmin'], authResult.user);
     if (!perms.authorized) return perms.response;
 
-    const { title, type, subject, duration, totalMarks } = req.body;
+    let body;
+    try {
+      body = await req.json();
+    } catch (err) {
+      return {
+        status: 400,
+        jsonBody: { message: 'Invalid JSON body' }
+      };
+    }
+
+    const { name, type, subject, duration, totalMarks } = body;
     const errors = [];
-    if (!title || title.trim().length <3) errors.push({param:'title', msg:'Title min 3 chars'});
-    if (!['JEE','NEET','Mock','Practice'].includes(type)) errors.push({param:'type', msg:'Invalid type'});
-    if (!['Physics','Chemistry','Mathematics','Biology','Mixed'].includes(subject)) errors.push({param:'subject', msg:'Invalid subject'});
-    if (!Number.isInteger(duration) || duration<1) errors.push({param:'duration', msg:'Duration positive integer'});
-    if (!Number.isInteger(totalMarks) || totalMarks<1) errors.push({param:'totalMarks', msg:'TotalMarks positive integer'});
+    if (!name || name.trim().length <3) errors.push({param:'name', msg:'name min 3 chars'});
+    // if (!['JEE','NEET','Mock','Practice'].includes(type)) errors.push({param:'type', msg:'Invalid type'});
+    // if (!['Physics','Chemistry','Mathematics','Biology','Mixed'].includes(subject)) errors.push({param:'subject', msg:'Invalid subject'});
+    // if (!Number.isInteger(duration) || duration<1) errors.push({param:'duration', msg:'Duration positive integer'});
+    // if (!Number.isInteger(totalMarks) || totalMarks<1) errors.push({param:'totalMarks', msg:'TotalMarks positive integer'});
     if (errors.length) return { status:400, jsonBody: {errors} };
 
     try {
-      const test = await Test.create({ ...req.body, createdBy: authResult.user._id });
+      const test = await Test.create({ ...body, createdBy: authResult.user._id });
       return { status:201, jsonBody: { message:'Test created successfully', test } };
     } catch (e) {
       console.error(e);
