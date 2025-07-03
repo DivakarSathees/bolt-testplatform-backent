@@ -12,7 +12,7 @@ app.http('updateTest', {
       await connectDB();
       const user = verifyToken(request);
 
-      const id = context.request.params.id;
+      const id = request.params.id;
       const body = await request.json();
       body.lastUpdatedBy = user.userId;
 

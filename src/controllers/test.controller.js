@@ -1,4 +1,5 @@
-const Test = require('../models/test.model');
+// const Test = require('../models/test.model');
+const Test = require('../boltmodels/Test');
 
 // Create Test
 const createTest = async (data) => {
@@ -45,6 +46,8 @@ const getTestById = async (id) => {
 // Update Test
 const updateTest = async (id, updateData) => {
   updateData.updatedAt = new Date();
+  console.log('Update Data:', updateData);
+  
 
   const updated = await Test.findByIdAndUpdate(id, updateData, {
     new: true

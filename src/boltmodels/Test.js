@@ -57,7 +57,7 @@ const testSchema = new mongoose.Schema({
   // },
   questionIds: [{
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Question',
+    ref: 'Questions',
     default: []
   }],
   // instructions: [{
