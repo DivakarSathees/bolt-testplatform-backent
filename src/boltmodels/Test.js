@@ -45,16 +45,16 @@ const testSchema = new mongoose.Schema({
   //   type: Number,
   //   required: true
   // },
-  // negativeMarking: {
-  //   enabled: {
-  //     type: Boolean,
-  //     default: true
-  //   },
-  //   marks: {
-  //     type: Number,
-  //     default: 0.25
-  //   }
-  // },
+  negativeMarking: {
+    enabled: {
+      type: Boolean,
+      default: true
+    },
+    marks: {
+      type: Number,
+      default: 0.25
+    }
+  },
   questionIds: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Questions',
